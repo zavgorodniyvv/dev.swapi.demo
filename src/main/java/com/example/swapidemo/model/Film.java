@@ -31,7 +31,7 @@ public class Film {
     @JsonProperty("vehicles")
     private List<String> vehicles;
     @JsonProperty("species")
-    private String species;
+    private List<String> species;
     @JsonProperty("created")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
     private LocalDateTime created;
@@ -113,11 +113,11 @@ public class Film {
         this.vehicles = vehicles;
     }
 
-    public String getSpecies() {
+    public List<String> getSpecies() {
         return species;
     }
 
-    public void setSpecies(String species) {
+    public void setSpecies(List<String> species) {
         this.species = species;
     }
 

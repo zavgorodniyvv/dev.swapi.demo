@@ -25,8 +25,8 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String sendSingleGetRequest(String url) {
-        HttpRequest request = getHttpRequest(url);
-        HttpClient client = getHttpClient();
+        HttpRequest request = createHttpRequest(url);
+        HttpClient client = createHttpClient();
         logger.info("Sending request to SWAPI, url: {}", request.uri());
 
         HttpResponse<String> response = null;
@@ -58,7 +58,7 @@ public class HttpServiceImpl implements HttpService {
         return response;
     }
 
-    private static HttpClient getHttpClient() {
+    private static HttpClient createHttpClient() {
         return HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .followRedirects(HttpClient.Redirect.NORMAL)
@@ -66,7 +66,7 @@ public class HttpServiceImpl implements HttpService {
                 .build();
     }
 
-    private static HttpRequest getHttpRequest(String url) {
+    private static HttpRequest createHttpRequest(String url) {
         HttpRequest request;
         try {
             request = HttpRequest.newBuilder()
