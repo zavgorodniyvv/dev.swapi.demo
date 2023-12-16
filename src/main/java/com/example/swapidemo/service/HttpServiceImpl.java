@@ -13,6 +13,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class HttpServiceImpl implements HttpService {
@@ -25,8 +27,8 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String sendSingleGetRequest(String url) {
-        HttpRequest request = getHttpRequest(url);
-        HttpClient client = getHttpClient();
+        HttpRequest request = createHttpRequest(url);
+        HttpClient client = createHttpClient();
         logger.info("Sending request to SWAPI, url: {}", request.uri());
 
         HttpResponse<String> response = null;
@@ -44,6 +46,17 @@ public class HttpServiceImpl implements HttpService {
         return response.body();
     }
 
+    @Override
+    public List<String> sendMultipleGetRequest(List<String> urls) {
+        var client = createHttpClient();
+        List<CompletableFuture<String>> future = urls.stream()
+                .map(u -> client.sendAsync(createHttpRequest(u), HttpResponse.BodyHandlers.ofString())
+                        .thenApply(HttpResponse::body))
+                .toList();
+        return future.stream()
+                .map(CompletableFuture::join)
+                .toList();
+    }
 
     private HttpResponse<String> sendSingleHttpRequest(HttpClient client, HttpRequest request) throws IOException, InterruptedException {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -58,7 +71,7 @@ public class HttpServiceImpl implements HttpService {
         return response;
     }
 
-    private static HttpClient getHttpClient() {
+    private HttpClient createHttpClient() {
         return HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .followRedirects(HttpClient.Redirect.NORMAL)
@@ -66,7 +79,7 @@ public class HttpServiceImpl implements HttpService {
                 .build();
     }
 
-    private static HttpRequest getHttpRequest(String url) {
+    private HttpRequest createHttpRequest(String url) {
         HttpRequest request;
         try {
             request = HttpRequest.newBuilder()
