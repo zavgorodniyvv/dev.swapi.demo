@@ -29,7 +29,7 @@ public class HttpServiceImpl implements HttpService {
         HttpClient client = createHttpClient();
         logger.info("Sending request to SWAPI, url: {}", request.uri());
 
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = retryTemplate.execute(retryCallback -> sendSingleHttpRequest(client, request),
             recoveryCallback -> {
