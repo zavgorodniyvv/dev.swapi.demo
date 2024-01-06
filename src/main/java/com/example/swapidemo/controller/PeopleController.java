@@ -1,5 +1,6 @@
 package com.example.swapidemo.controller;
 import com.example.swapidemo.model.Person;
+import com.example.swapidemo.model.PersonFull;
 import com.example.swapidemo.service.PersonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

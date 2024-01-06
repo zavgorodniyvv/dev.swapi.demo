@@ -1,6 +1,8 @@
 package com.example.swapidemo.service;
 
 import com.example.swapidemo.exception.SwapiAppException;
+import com.example.swapidemo.model.Film;
+import com.example.swapidemo.model.People;
 import com.example.swapidemo.model.Person;
 import com.example.swapidemo.model.PersonFull;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,12 +22,15 @@ public class PersonServiceImpl implements PersonService {
     private final URLCreator urlCreator;
     private final ObjectMapper swapiObjectMapper;
     private final FilmService filmService;
+    private final CacheService<String, Person> cacheService;
 
-    public PersonServiceImpl(HttpService httpService, URLCreator urlCreator, ObjectMapper swapiObjectMapper, FilmService filmService) {
+    public PersonServiceImpl(HttpService httpService, URLCreator urlCreator, ObjectMapper swapiObjectMapper,
+                             FilmService filmService, CacheService<String, Person> cacheService) {
         this.httpService = httpService;
         this.urlCreator = urlCreator;
         this.swapiObjectMapper = swapiObjectMapper;
         this.filmService = filmService;
+        this.cacheService = cacheService;
     }
 
     @Override
@@ -94,7 +99,10 @@ public class PersonServiceImpl implements PersonService {
                 getAll = false;
             }
         } while (getAll);
-        logger.info("Got response for people from SWAPI: {}");
+        logger.info("Got response for people from SWAPI: {}", people.size());
         return people;
+    }
+    private Person getPersonFromCache(String id) {
+        return cacheService.get(id);
     }
 }
