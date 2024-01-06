@@ -1,6 +1,7 @@
 package com.example.swapidemo.service;
 
 import com.example.swapidemo.model.Person;
+import com.example.swapidemo.model.PersonFull;
 
 import java.util.List;
 

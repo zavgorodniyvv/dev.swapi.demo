@@ -1,5 +1,6 @@
 package com.example.swapidemo.controller;
 import com.example.swapidemo.model.Person;
+import com.example.swapidemo.model.PersonFull;
 import com.example.swapidemo.service.PersonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class PeopleController {
         return new ResponseEntity<>(personService.findPersonByName(name), HttpStatus.OK);
     }
 
-    @GetMapping("/people")
+    @GetMapping("/people/all")
     public ResponseEntity<List<Person>> getAllPeople() {
         return new ResponseEntity<>(personService.getAllPeople(), HttpStatus.OK);
     }
