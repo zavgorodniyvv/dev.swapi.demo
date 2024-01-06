@@ -31,6 +31,17 @@ public class PersonServiceImpl implements PersonService{
     @Override
     public Person getPerson(String id) {
         logger.info("Get request for people with id: {}", id);
+        Person person = getPersonFromCache(id);
+        if (person == null) {
+            logger.info("Person not found in cache. Will get it from SWAPI");
+            person = getPersonFromSwapi(id);
+            cacheService.put(id, person);
+        }
+        logger.info("Returning person from cache: {}", person);
+        return person;
+    }
+
+    private Person getPersonFromSwapi(String id) {
         var url = urlCreator.createPersonByIdURL(id);
         String peopleAsString = httpService.sendSingleGetRequest(url);
 
