@@ -28,4 +28,14 @@ public class PeopleController {
     public ResponseEntity<List<Person>> findPersonByName(@RequestParam String name) {
         return new ResponseEntity<>(personService.findPersonByName(name), HttpStatus.OK);
     }
+
+    @GetMapping("/people")
+    public ResponseEntity<List<Person>> getAllPeople() {
+        return new ResponseEntity<>(personService.getAllPeople(), HttpStatus.OK);
+    }
+
+    @GetMapping("/people/full/{id}")
+    public ResponseEntity<PersonFull> getPeopleFull(@PathVariable String id) {
+        return new ResponseEntity<>(personService.getPersonWithFullInfo(id), HttpStatus.OK);
+    }
 }

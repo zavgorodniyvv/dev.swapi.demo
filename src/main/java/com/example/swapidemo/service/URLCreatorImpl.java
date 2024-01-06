@@ -22,4 +22,9 @@ public class URLCreatorImpl implements URLCreator{
         return swapi.getBaseUrl() + swapi.getSuffixPeople() + swapi.getFindSuffix() + name;
     }
 
+    @Override
+    public String createPeopleURL() {
+        return swapi.getBaseUrl() + swapi.getSuffixPeople();
+    }
+
 }

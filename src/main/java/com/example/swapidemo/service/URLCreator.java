@@ -5,4 +5,5 @@ public interface URLCreator {
 
     String createFindPersonByNameURL(String name);
 
+    String createPeopleURL();
 }
