@@ -1,8 +1,8 @@
 package com.example.swapidemo.service;
 
 import com.example.swapidemo.exception.SwapiAppException;
-import com.example.swapidemo.model.People;
 import com.example.swapidemo.model.Person;
+import com.example.swapidemo.model.PersonFull;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -19,16 +19,29 @@ public class PersonServiceImpl implements PersonService {
     private final HttpService httpService;
     private final URLCreator urlCreator;
     private final ObjectMapper swapiObjectMapper;
+    private final FilmService filmService;
 
-    public PersonServiceImpl(HttpService httpService, URLCreator urlCreator, ObjectMapper swapiObjectMapper) {
+    public PersonServiceImpl(HttpService httpService, URLCreator urlCreator, ObjectMapper swapiObjectMapper, FilmService filmService) {
         this.httpService = httpService;
         this.urlCreator = urlCreator;
         this.swapiObjectMapper = swapiObjectMapper;
+        this.filmService = filmService;
     }
 
     @Override
     public Person getPerson(String id) {
         logger.info("Get request for people with id: {}", id);
+        Person person = getPersonFromCache(id);
+        if (person == null) {
+            logger.info("Person not found in cache. Will get it from SWAPI");
+            person = getPersonFromSwapi(id);
+            cacheService.put(id, person);
+        }
+        logger.info("Returning person from cache: {}", person);
+        return person;
+    }
+
+    private Person getPersonFromSwapi(String id) {
         var url = urlCreator.createPersonByIdURL(id);
         String peopleAsString = httpService.sendSingleGetRequest(url);
 
@@ -41,6 +54,24 @@ public class PersonServiceImpl implements PersonService {
         }
         logger.info("Got response from SWAPI: {}", person);
         return person;
+    }
+
+    @Override
+    public PersonFull getPersonWithFullInfo(String id) {
+        logger.info("Get request for get full people info with id: {}", id);
+        Person person = getPerson(id);
+        List<Film> films = getFilmsByPerson(id);
+        //TODO implement getting info about species, starships, vehicles
+
+        PersonFull personFull = new PersonFull(person, films, null, null, null);
+
+        logger.info("return Person with full info: {}", personFull);
+        return personFull;
+    }
+
+    private List<Film> getFilmsByPerson(String id) {
+        List<String> urls = getPerson(id).getFilms();
+        return filmService.getFilms(urls);
     }
 
     @Override
