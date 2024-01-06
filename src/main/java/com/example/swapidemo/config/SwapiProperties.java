@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class SwapiProperties {
     private String baseUrl;
     private String suffixPeople;
+    private String findSuffix;
 
     public String getBaseUrl() {
         return baseUrl;
@@ -24,5 +25,13 @@ public class SwapiProperties {
 
     public void setSuffixPeople(String suffixPeople) {
         this.suffixPeople = suffixPeople;
+    }
+
+    public String getFindSuffix() {
+        return findSuffix;
+    }
+
+    public void setFindSuffix(String findSuffix) {
+        this.findSuffix = findSuffix;
     }
 }

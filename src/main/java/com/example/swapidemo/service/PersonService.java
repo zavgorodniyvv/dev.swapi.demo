@@ -11,4 +11,6 @@ public interface PersonService {
     List<Person> getAllPeople();
 
     PersonFull getPersonWithFullInfo(String id);
+
+    List<Person> findPersonByName(String name);
 }

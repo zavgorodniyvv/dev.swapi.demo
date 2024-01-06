@@ -18,6 +18,11 @@ public class URLCreatorImpl implements URLCreator{
     }
 
     @Override
+    public String createFindPersonByNameURL(String name) {
+        return swapi.getBaseUrl() + swapi.getSuffixPeople() + swapi.getFindSuffix() + name;
+    }
+
+    @Override
     public String createPeopleURL() {
         return swapi.getBaseUrl() + swapi.getSuffixPeople();
     }

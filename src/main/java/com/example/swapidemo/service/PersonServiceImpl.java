@@ -3,6 +3,7 @@ package com.example.swapidemo.service;
 import com.example.swapidemo.exception.SwapiAppException;
 import com.example.swapidemo.model.Film;
 import com.example.swapidemo.model.People;
+import com.example.swapidemo.model.PeopleSearchResult;
 import com.example.swapidemo.model.Person;
 import com.example.swapidemo.model.PersonFull;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,6 +60,32 @@ public class PersonServiceImpl implements PersonService {
         }
         logger.info("Got response from SWAPI: {}", person);
         return person;
+    }
+
+    @Override
+    public List<Person> findPersonByName(String name) {
+        logger.info("Get request find people by name: {}", name);
+        List<Person> people = new ArrayList<>();
+        var url = urlCreator.createFindPersonByNameURL(name);
+        boolean hasNext= true;
+        do {
+            String peopleAsString = httpService.sendSingleGetRequest(url);
+            PeopleSearchResult peopleSearchResult = null;
+            try {
+                peopleSearchResult = swapiObjectMapper.readValue(peopleAsString, PeopleSearchResult.class);
+            } catch (JsonProcessingException e) {
+                logger.error("Could not parse Parse response from server. Reason: {}", e.getMessage());
+            }
+            if(peopleSearchResult != null && peopleSearchResult.getNext() != null){
+                url = peopleSearchResult.getNext();
+            } else {
+                hasNext = false;
+            }
+            people.addAll(peopleSearchResult == null ? List.of() : peopleSearchResult.getResults());
+        } while(hasNext);
+
+        logger.info("Got response from SWAPI, {} number", people.size());
+        return people;
     }
 
     @Override
